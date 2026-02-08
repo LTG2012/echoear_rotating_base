@@ -23,6 +23,7 @@ static const char *TAG = "Echoear Rotating Base";
 #define BASE_ANGLE_LIMIT_SWITCH_GPIO (GPIO_NUM_1)
 #define BOOT_BUTTON_GPIO             (GPIO_NUM_9)
 #define BASE_CALIBRATION_TASK_STACK_SIZE    (1024 * 3)
+#define BASE_HOME_OFFSET_DEG         (75.0f)
 
 static SemaphoreHandle_t s_limit_switch_semaphore = NULL;
 
@@ -110,7 +111,7 @@ static void boot_button_init(void)
  * 
  * @note Rotates motor until limit switch is pressed, then moves to home position
  * @note If limit switch is not pressed within 2 seconds (mechanical fault protection),
- *       directly rotates 95 degrees to the right to reach home position
+ *       directly rotates BASE_HOME_OFFSET_DEG degrees to the right to reach home position
  */
 static void base_calibration_task(void *arg)
 {
@@ -128,7 +129,7 @@ static void base_calibration_task(void *arg)
             ESP_LOGW(TAG, "Calibration timeout! Limit switch not pressed within 2 seconds");
             ESP_LOGW(TAG, "Assuming mechanical fault, moving directly to home position");
             vTaskDelay(pdMS_TO_TICKS(200));
-            stepper_rotate_angle_with_accel(95.0, STEPPER_SPEED_FAST);
+            stepper_rotate_angle_with_accel(BASE_HOME_OFFSET_DEG, STEPPER_SPEED_FAST);
             stepper_motor_power_off();
             stepper_reset_angle();  // Reset angle to 0 after reaching home position
             ESP_LOGI(TAG, "Base calibration completed (timeout fallback mode)");
@@ -140,7 +141,7 @@ static void base_calibration_task(void *arg)
             // Limit switch pressed, move to home position
             ESP_LOGI(TAG, "Limit switch pressed, moving to home position");
             vTaskDelay(pdMS_TO_TICKS(200));
-            stepper_rotate_angle_with_accel(95.0, STEPPER_SPEED_FAST);
+            stepper_rotate_angle_with_accel(BASE_HOME_OFFSET_DEG, STEPPER_SPEED_FAST);
             stepper_motor_power_off();
             stepper_reset_angle();  // Reset angle to 0 after reaching home position
             ESP_LOGI(TAG, "Base calibration completed");

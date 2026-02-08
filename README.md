@@ -165,7 +165,7 @@ idf.py monitor
 
 1. **Base Angle Calibration**:
    - After power-on, the motor will automatically rotate left to find the limit switch
-   - After touching the limit switch, the motor will rotate right 95° to the center position
+   - After touching the limit switch, the motor will rotate right 75° to the center position
    - After calibration is complete, the motor powers off
 
 2. **Magnetic Switch Automatic Calibration** (if first use):
